@@ -29,6 +29,8 @@ FetchContent_MakeAvailable(Eigen)
 
 # Add source to this project's executable.
 add_executable (Lab_2 main.cpp
+        functions.cpp
+        functions.h
 )
 target_link_libraries(Lab_2 PRIVATE Eigen3::Eigen)
 
