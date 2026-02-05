@@ -18,6 +18,6 @@ using namespace Eigen;
 MatrixXd ReadDatatoMatrix(const string& filename);
 void WriteMatrixToFile(const MatrixXd& Mat, const string& filename, unsigned int precision);
 MatrixXd DesignMatrix(const MatrixXd& M, double omega);
-double median(const MatrixXd& M, int col);
+double median(const MatrixXd& M);
 
 #endif //LAB_2_FUNCTIONS_H

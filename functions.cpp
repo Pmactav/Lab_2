@@ -65,7 +65,7 @@ void WriteMatrixToFile(const MatrixXd &Mat, const string& filename, unsigned int
     out.close();
 }
 
-double median(const MatrixXd& M, int col) {
+double median(const MatrixXd& M) {
     int n = M.rows();
 
     if (n % 2 == 0) {return (M(n/2 - 1, 0) + M(n/2, 0)) / 2.0;}

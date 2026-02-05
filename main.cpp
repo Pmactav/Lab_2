@@ -29,8 +29,8 @@ int main() {
     double P2 = sqrt(var2/(obsB.rows()-1));
     double weightedMean = (P1*mean1 + P2*mean2)/(P1+P2);
     double weightedSigma = sqrt((P1*var1 + P2*var2)/(obsA.rows()+obsB.rows()-2));
-    double median1 = median(obsA,1);
-    double median2 = median(obsB,1);
+    double median1 = median(obsA);
+    double median2 = median(obsB);
     cout << "Median A: " << median1 << endl;
     cout << "Median B: " << median2 << endl;
     cout << "Weighted mean: " << weightedMean << endl;
