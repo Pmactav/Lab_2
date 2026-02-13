@@ -3,6 +3,7 @@
 #include <sstream>
 #include <string>
 #include <iomanip>
+#include <numeric>
 #include <vector>
 #include <Eigen/Dense>
 #include "functions.h"
@@ -58,7 +59,15 @@ int main() {
     cout << "CI 95%," << confidenceIntervalLow << "," << confidenceIntervalHigh << "\n";
     cout << "Res 99% A," << res99A << "," << res99B << "\n";
 
+    //Task 2
+    MatrixXd weight = ReadDatatoMatrix("../weight_2026.txt");
+    MatrixXd height = ReadDatatoMatrix("../height_2026.txt");
+    MatrixXd speed = ReadDatatoMatrix("../speed_2026.txt");
+    MatrixXd goals = ReadDatatoMatrix("../goals_2026.txt");
 
-
+    cout << weight.rows() << endl;
+    cout << height.rows() << endl;
+    cout << speed.rows() << endl;
+    cout << goals.rows() << endl;
     return 0;
 }

@@ -14,38 +14,36 @@ using namespace std;
 using namespace Eigen;
 
 MatrixXd ReadDatatoMatrix(const std::string &filename) {
+
     ifstream infile(filename);
     if (!infile.is_open()) {
         cerr << "ERROR: Could not open file " << filename << "\n";
-        return MatrixXd(0, 2);
+        return MatrixXd(0,0);
     }
-    vector<Vector2d> rows;
+
+    vector<vector<double>> data;
     string line;
+
     while (getline(infile, line)) {
         if (line.empty()) continue;
         stringstream ss(line);
-        double t, l;
-        if (ss >> t >> l) {
-            rows.emplace_back(t, l);
-        }
+        vector<double> row;
+        double value;
+        while (ss >> value) {row.push_back(value);}
+        if (!row.empty())data.push_back(row);
     }
-    infile.close();
-    MatrixXd M(rows.size(), 2);
-    for (int i = 0; i < static_cast<int>(rows.size()); ++i) {
-        M.row(i) = rows[i];
-    }
+
+    if (data.empty())
+        return MatrixXd(0,0);
+    int rows = data.size();
+    int cols = data[0].size();
+    MatrixXd M(rows, cols);
+    for (int i = 0; i < rows; ++i)
+        for (int j = 0; j < cols; ++j)
+            M(i,j) = data[i][j];
     return M;
 }
 
-MatrixXd DesignMatrix(const MatrixXd& M, double omega) {
-    MatrixXd A(M.rows(),3);
-    for (int i = 0; i < M.rows(); ++i) {
-        A(i,0) = sin(M(i,0)*omega);
-        A(i,1) = cos(M(i,0)*omega);
-        A(i,2) = 1;
-    }
-    return A;
-}
 
 void WriteMatrixToFile(const MatrixXd &Mat, const string& filename, unsigned int precision){
     ofstream out(filename, ios::out);
@@ -67,7 +65,6 @@ void WriteMatrixToFile(const MatrixXd &Mat, const string& filename, unsigned int
 
 double median(const MatrixXd& M) {
     int n = M.rows();
-
     if (n % 2 == 0) {return (M(n/2 - 1, 0) + M(n/2, 0)) / 2.0;}
     else {return M(n/2, 0);}
 }
