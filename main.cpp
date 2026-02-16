@@ -65,9 +65,15 @@ int main() {
     MatrixXd speed = ReadDatatoMatrix("../speed_2026.txt");
     MatrixXd goals = ReadDatatoMatrix("../goals_2026.txt");
 
-    cout << weight.rows() << endl;
-    cout << height.rows() << endl;
-    cout << speed.rows() << endl;
-    cout << goals.rows() << endl;
+    VectorXd weightStats = stats(weight);
+    VectorXd heightStats = stats(height);
+    VectorXd speedStats  = stats(speed);
+    VectorXd goalsStats  = stats(goals);
+
+    cout << "Weight\tHeight\tSpeed\tGoals\n";
+    printStats("Weight", weightStats);
+    printStats("Height", heightStats);
+    printStats("Speed",  speedStats);
+    printStats("Goals",  goalsStats);
     return 0;
 }

@@ -19,5 +19,7 @@ MatrixXd ReadDatatoMatrix(const string& filename);
 void WriteMatrixToFile(const MatrixXd& Mat, const string& filename, unsigned int precision);
 MatrixXd DesignMatrix(const MatrixXd& M, double omega);
 double median(const MatrixXd& M);
+VectorXd stats(const MatrixXd &M);
+void printStats(const string& name, const VectorXd& s);
 
 #endif //LAB_2_FUNCTIONS_H
