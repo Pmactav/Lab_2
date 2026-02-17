@@ -79,3 +79,7 @@ void printStats(const string& name, const VectorXd& s) {
          << setw(9) << s(2)
          << endl;
 }
+
+void writeRow(ofstream &out, const string &label, double A, double B) {
+    out << label << "," << A << "," << B << endl;
+}
