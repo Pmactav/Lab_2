@@ -21,5 +21,6 @@ MatrixXd DesignMatrix(const MatrixXd& M, double omega);
 double median(const MatrixXd& M);
 VectorXd stats(const MatrixXd &M);
 void printStats(const string& name, const VectorXd& s);
+void writeRow(ofstream& out, const string& label, double A, double B);
 
 #endif //LAB_2_FUNCTIONS_H
