@@ -67,56 +67,48 @@ int main() {
     double res99LowA = resMeanA - z99*resStDevA/sqrt(nA);
     double res99LowB = resMeanB - z99*resStDevB/sqrt(nB);
 
-    //Print result
-    /*
-    cout << setprecision(5);
-    cout << "Na," << n1 << ",Nb," << n2 << "\n";
-    cout << "Stat,Obs A,Obs B\n";
-    cout << "Median," << median1 << "," << median2 << "\n";
-    cout << "Range," << range1 << "," << range2 << "\n";
-    cout << "Mean," << mean1 << "," << mean2 << "\n";
-    cout << "Std Dev," << sigma1 << "," << sigma2 << "\n";
-    cout << "Std Dev Mean," << meanDeviation1 << "," << meanDeviation2 << "\n";
-    cout << "Weighted Mean," << weightedMean << ",\n";
-    cout << "Weighted Std Dev," << weightedSigma << ",\n";
-    cout << "CI 95%," << confidenceIntervalLow << "," << confidenceIntervalHigh << "\n";
-    cout << "Res 99% A," << res99A << "," << res99B << "\n";
-    */
-
     //Task 2
+    //this could be a loop if time
     MatrixXd weight = ReadDatatoMatrix("../weight_2026.txt");
     MatrixXd height = ReadDatatoMatrix("../height_2026.txt");
     MatrixXd speed = ReadDatatoMatrix("../speed_2026.txt");
     MatrixXd goals = ReadDatatoMatrix("../goals_2026.txt");
+    //build full matrix
+    int n = weight.rows();
+    MatrixXd V(n, 4);
+    V.col(0) = weight;
+    V.col(1) = height;
+    V.col(2) = speed;
+    V.col(3) = goals;
+    //calculate var covar matrix
+    VectorXd mean = V.colwise().mean();
+    MatrixXd centered = V.rowwise() - mean.transpose();
+    MatrixXd C = (centered.transpose() * centered) / (n - 1);
+    VectorXd stddev = C.diagonal().cwiseSqrt();
+    MatrixXd R = C.array()/(stddev * stddev.transpose()).array();
 
+    //separate vectors to compute stats, could be a loop if time
     VectorXd weightStats = stats(weight);
     VectorXd heightStats = stats(height);
     VectorXd speedStats  = stats(speed);
     VectorXd goalsStats  = stats(goals);
+    //sace to csv, should make a function or loop
+    ofstream results("task1_results.csv");
+    results << "Statistic,ObsA,ObsB\n";
+    writeRow(results, "N", nA, nB);
+    writeRow(results, "Range", rangeA, rangeB);
+    writeRow(results, "Mean", meanA, meanB);
+    writeRow(results, "Median", medianA, medianB);
+    writeRow(results, "Variance", varA, varB);
+    writeRow(results, "StdDev", stDevA, stDevB);
+    writeRow(results, "meanDeviation", meanDeviationA, meanDeviationB);
 
-    /*
-    cout << "\tMean\tVariance\tDeviation\n";
-    printStats("Weight", weightStats);
-    printStats("Height", heightStats);
-    printStats("Speed",  speedStats);
-    printStats("Goals",  goalsStats);
-    */
-
-    MatrixXd results(12, 2);
-
-    results <<
-    nA, nB,
-    rangeA, rangeB,
-    meanA, meanB,
-    medianA, medianB,
-    varA, varB,
-    stDevA, stDevB,
-    meanDeviationA, meanDeviationB,
-    resSumA, resSumB,
-    resMeanA, resMeanB,
-    resStDevA, resStDevB,
-    res99LowA, res99LowB,
-    res99HighA, res99HighB;
+    writeRow(results, "ResidualSum", resSumA, resSumB);
+    writeRow(results, "ResidualMean", resMeanA, resMeanB);
+    writeRow(results, "ResidualStdDev", resStDevA, resStDevB);
+    writeRow(results, "ResidualCI99Low", res99LowA, res99LowB);
+    writeRow(results, "ResidualCI99High", res99HighA, res99HighB);
+    results.close();
 
     ofstream weightedResults("task1_weighted.csv");
     weightedResults << "Statistic,Value\n";
@@ -126,11 +118,12 @@ int main() {
     weightedResults << "CI95High," << confidenceIntervalHigh << "\n";
     weightedResults.close();
 
-    WriteMatrixToFile(results, "task1_results.csv", 6);
     WriteMatrixToFile(obsA, "obsA.csv", 6);
     WriteMatrixToFile(obsB, "obsB.csv", 6);
     WriteMatrixToFile(resA, "residualsA.csv", 6);
     WriteMatrixToFile(resB, "residualsB.csv", 6);
+    WriteMatrixToFile(C, "covariance.csv", 6);
+    WriteMatrixToFile(R, "correlation.csv", 6);
 
     return 0;
 }
