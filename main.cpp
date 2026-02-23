@@ -18,7 +18,6 @@ int main() {
     MatrixXd obsB = dataB.col(1);
     int nA = obsA.rows();
     int nB = obsB.rows();
-
     //Compute stats
     double rangeA = obsA.maxCoeff() - obsA.minCoeff();
     double rangeB = obsB.maxCoeff() - obsB.minCoeff();
@@ -83,13 +82,11 @@ int main() {
     MatrixXd C = (deviations.transpose() * deviations) / (n - 1);
     VectorXd stddev = C.diagonal().cwiseSqrt();
     MatrixXd R = C.array()/(stddev * stddev.transpose()).array();
-
     //separate vectors to compute stats, could use col references to clean it up
     VectorXd weightStats = stats(weight);
     VectorXd heightStats = stats(height);
     VectorXd speedStats  = stats(speed);
     VectorXd goalsStats  = stats(goals);
-
     //save to csv, should make a function or loop
     ofstream results("task1_results.csv");
     results << "Statistic,ObsA,ObsB\n";
@@ -102,13 +99,15 @@ int main() {
     writeRow(results, "meanDeviation", meanDeviationA, meanDeviationB);
     writeRow(results, "ConfidenceInterval", confidenceIntervalLow, confidenceIntervalHigh);
     //residual stats
+    writeRow(results, "ResidualRange", resRangeA, resRangeB);
     writeRow(results, "ResidualSum", resSumA, resSumB);
     writeRow(results, "ResidualMean", resMeanA, resMeanB);
+    writeRow(results, "ResidualMedian", resmedianA, resmedianB);
     writeRow(results, "ResidualStdDev", resStDevA, resStDevB);
     writeRow(results, "ResidualCI99Low", res99LowA, res99LowB);
     writeRow(results, "ResidualCI99High", res99HighA, res99HighB);
     results.close();
-
+    //output weighted stats
     ofstream weightedResults("task1_weighted.csv");
     weightedResults << "Statistic,Value\n";
     weightedResults << "WeightedMean, " << weightedMean << "\n";
@@ -116,13 +115,12 @@ int main() {
     weightedResults << "CI95Low,"  << confidenceIntervalLow  << "\n";
     weightedResults << "CI95High," << confidenceIntervalHigh << "\n";
     weightedResults.close();
-
+    //write matrices to file
     WriteMatrixToFile(obsA, "obsA.csv", 6);
     WriteMatrixToFile(obsB, "obsB.csv", 6);
     WriteMatrixToFile(resA, "residualsA.csv", 6);
     WriteMatrixToFile(resB, "residualsB.csv", 6);
     WriteMatrixToFile(C, "covariance.csv", 6);
     WriteMatrixToFile(R, "correlation.csv", 6);
-
     return 0;
 }
