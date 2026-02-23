@@ -40,7 +40,6 @@ int main() {
     double P2 = 1.0/varB;
     double weightedMean = (P1*meanA + P2*meanB)/(P1+P2);
     double weightedSigma = sqrt(1.0/(P1+P2));
-
     //Residual stats
     double resRangeA = resA.maxCoeff() - resA.minCoeff();
     double resRangeB = resB.maxCoeff() - resB.minCoeff();
@@ -54,12 +53,10 @@ int main() {
     double resStDevB = sqrt(resVarB);
     double resmedianA = median(resA);
     double resmedianB = median(resB);
-
     //Calculate CI
     double z95 = 1.96; //both samples >30 so used z table value
     double confidenceIntervalLow  = weightedMean - z95*weightedSigma;
     double confidenceIntervalHigh = weightedMean + z95*weightedSigma;
-
     //residuals CI
     double z99 = 2.576;
     double res99HighA = resMeanA + z99*resStDevA/sqrt(nA);
@@ -81,18 +78,19 @@ int main() {
     V.col(2) = speed;
     V.col(3) = goals;
     //calculate var covar matrix
-    VectorXd mean = V.colwise().mean();
-    MatrixXd centered = V.rowwise() - mean.transpose();
-    MatrixXd C = (centered.transpose() * centered) / (n - 1);
+    VectorXd v_hat = V.colwise().mean();
+    MatrixXd deviations = V.rowwise() - v_hat.transpose();
+    MatrixXd C = (deviations.transpose() * deviations) / (n - 1);
     VectorXd stddev = C.diagonal().cwiseSqrt();
     MatrixXd R = C.array()/(stddev * stddev.transpose()).array();
 
-    //separate vectors to compute stats, could be a loop if time
+    //separate vectors to compute stats, could use col references to clean it up
     VectorXd weightStats = stats(weight);
     VectorXd heightStats = stats(height);
     VectorXd speedStats  = stats(speed);
     VectorXd goalsStats  = stats(goals);
-    //sace to csv, should make a function or loop
+
+    //save to csv, should make a function or loop
     ofstream results("task1_results.csv");
     results << "Statistic,ObsA,ObsB\n";
     writeRow(results, "N", nA, nB);
@@ -102,7 +100,8 @@ int main() {
     writeRow(results, "Variance", varA, varB);
     writeRow(results, "StdDev", stDevA, stDevB);
     writeRow(results, "meanDeviation", meanDeviationA, meanDeviationB);
-
+    writeRow(results, "ConfidenceInterval", confidenceIntervalLow, confidenceIntervalHigh);
+    //residual stats
     writeRow(results, "ResidualSum", resSumA, resSumB);
     writeRow(results, "ResidualMean", resMeanA, resMeanB);
     writeRow(results, "ResidualStdDev", resStDevA, resStDevB);
